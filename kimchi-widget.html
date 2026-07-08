@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>양배추 김치 — Round Cabbage Kimchi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Archivo+Expanded:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brine:#EDEFE4;
+    --brine-deep:#DDE2CE;
+    --cabbage:#3E5731;
+    --cabbage-deep:#2C3F22;
+    --gochugaru:#C13B23;
+    --gochugaru-deep:#9A2D19;
+    --clay:#9C6B3E;
+    --paste:#F1E6CE;
+    --charcoal:#292420;
+    --line: rgba(41,36,32,0.14);
+    --shadow: 0 1px 0 rgba(41,36,32,0.06);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--brine);
+    color:var(--charcoal);
+    font-family:'Archivo', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:780px; margin:0 auto; padding:18px 16px 64px; }
+
+  /* ---------- header / label card ---------- */
+  .label{
+    background:var(--paste);
+    border:1px solid var(--line);
+    border-radius:18px 18px 6px 6px;
+    padding:26px 22px 20px;
+    position:relative;
+    overflow:hidden;
+  }
+  .label::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:6px;
+    background:repeating-linear-gradient(90deg, var(--gochugaru) 0 18px, var(--cabbage) 18px 36px);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--clay); font-weight:600; margin:6px 0 10px;
+  }
+  h1{
+    font-family:'Archivo Expanded', sans-serif;
+    font-weight:800;
+    font-size:clamp(26px, 6vw, 34px);
+    margin:0 0 2px;
+    color:var(--cabbage-deep);
+    letter-spacing:-0.01em;
+  }
+  .korean{
+    font-size:16px; font-weight:500; font-style:italic;
+    color:var(--gochugaru-deep); margin:0 0 12px;
+  }
+  .tagline{
+    font-size:14.5px; color:rgba(41,36,32,0.75); margin:0 0 18px; max-width:52ch;
+  }
+  .stats{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden;
+  }
+  .stat{ background:var(--brine); padding:9px 8px; text-align:center; }
+  .stat b{
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--cabbage-deep); font-weight:600;
+  }
+  .stat span{ font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:rgba(41,36,32,0.55); }
+
+  /* batch stepper */
+  .batch{
+    margin-top:18px; display:flex; align-items:center; justify-content:space-between;
+    background:var(--brine); border:1px solid var(--line); border-radius:10px; padding:10px 12px;
+  }
+  .batch-label{ font-size:13px; }
+  .batch-label b{ font-family:'IBM Plex Mono',monospace; color:var(--gochugaru-deep); }
+  .stepper{ display:flex; align-items:center; gap:10px; }
+  .stepper button{
+    width:30px; height:30px; border-radius:8px; border:1px solid var(--line);
+    background:var(--cabbage); color:#fff; font-size:16px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .stepper button:active{ background:var(--cabbage-deep); }
+  .stepper output{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; min-width:38px; text-align:center; font-size:14px;
+  }
+
+  /* ---------- section headings ---------- */
+  section{ margin-top:26px; }
+  .sec-head{ display:flex; align-items:baseline; gap:8px; margin-bottom:10px; }
+  .sec-head h2{
+    font-family:'Archivo Expanded', sans-serif; font-weight:700; font-size:15px;
+    text-transform:uppercase; letter-spacing:0.05em; color:var(--cabbage-deep); margin:0;
+  }
+  .sec-head .rule{ flex:1; height:1px; background:var(--line); }
+
+  /* ---------- tracker (signature element) ---------- */
+  .tracker{
+    background:var(--cabbage-deep); color:var(--brine);
+    border-radius:14px; padding:20px 20px 22px; position:relative;
+  }
+  .tracker h2{ color:var(--brine); opacity:0.85; }
+  .tracker .rule{ background:rgba(237,239,228,0.18); }
+  .tracker-status{
+    font-family:'IBM Plex Mono',monospace; font-size:13px; margin-bottom:14px; min-height:18px;
+    color:#D8E0C8;
+  }
+  .tracker-status b{ color:#fff; font-weight:600; }
+  .gauge{
+    position:relative; height:34px; border-radius:8px; overflow:hidden; display:flex;
+    border:1px solid rgba(237,239,228,0.25);
+  }
+  .gauge-zone{ height:100%; position:relative; display:flex; align-items:center; justify-content:center; }
+  .gauge-zone span{
+    font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:0.03em; text-transform:uppercase;
+    color:rgba(41,36,32,0.65); font-weight:600;
+  }
+  .z-fresh{ flex:2; background:#DCE3C6; }
+  .z-best{ flex:12; background:#E9A23B; }
+  .z-past{ flex:5; background:#C13B23; }
+  .marker{
+    position:absolute; top:-5px; width:2px; height:44px; background:#fff;
+    box-shadow:0 0 0 3px rgba(255,255,255,0.25); left:0%; transition:left 0.6s ease;
+  }
+  .marker::after{
+    content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+    width:8px; height:8px; border-radius:50%; background:#fff;
+  }
+  .gauge-labels{ display:flex; justify-content:space-between; margin-top:6px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#B9C3A2; }
+  .tracker-actions{ margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; }
+  .btn{
+    font-family:'Archivo',sans-serif; font-weight:600; font-size:13px; border:none; border-radius:8px;
+    padding:10px 16px; cursor:pointer;
+  }
+  .btn-primary{ background:var(--gochugaru); color:#fff; }
+  .btn-primary:active{ background:var(--gochugaru-deep); }
+  .btn-ghost{ background:transparent; color:#D8E0C8; border:1px solid rgba(237,239,228,0.3); }
+
+  /* ---------- ingredients ---------- */
+  .card{
+    background:var(--paste); border:1px solid var(--line); border-radius:12px; padding:16px 16px 8px; margin-bottom:12px;
+  }
+  .card h3{
+    font-family:'Archivo Expanded',sans-serif; font-size:14px; font-weight:700; margin:0 0 10px; color:var(--gochugaru-deep);
+  }
+  .ing-row{
+    display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px dashed var(--line); font-size:13.5px;
+  }
+  .ing-row:last-child{ border-bottom:none; }
+  .ing-amt{ font-family:'IBM Plex Mono',monospace; font-weight:600; white-space:nowrap; color:var(--cabbage-deep); }
+
+  /* ---------- method ---------- */
+  .step{
+    display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .step:last-child{ border-bottom:none; }
+  .step-num{
+    font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:20px; color:var(--brine-deep);
+    -webkit-text-stroke:1px var(--cabbage); color:transparent;
+    width:30px; flex:none; text-align:center;
+  }
+  .step-body{ flex:1; }
+  .step-title{ font-weight:700; font-size:14.5px; margin:0 0 4px; color:var(--cabbage-deep); }
+  .step-text{ font-size:13.5px; color:rgba(41,36,32,0.85); margin:0; }
+  .timer{
+    margin-top:10px; background:var(--brine); border:1px solid var(--line); border-radius:9px;
+    padding:8px 10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .timer-display{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px; min-width:64px; color:var(--gochugaru-deep);
+  }
+  .timer-choices{ display:flex; gap:6px; }
+  .chip{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; border:1px solid var(--line); background:#fff;
+    border-radius:6px; padding:4px 8px; cursor:pointer;
+  }
+  .chip.active{ background:var(--cabbage); color:#fff; border-color:var(--cabbage); }
+  .timer button.btn{ padding:6px 12px; font-size:12px; }
+
+  /* ---------- notes ---------- */
+  .notes{ font-size:13px; color:rgba(41,36,32,0.8); }
+  .notes p{ margin:0 0 12px; }
+  .notes b{ color:var(--cabbage-deep); }
+  footer{ text-align:center; margin-top:30px; font-size:11px; color:rgba(41,36,32,0.4); font-family:'IBM Plex Mono',monospace; }
+
+  @media (max-width:420px){
+    .stats{ grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="label">
+    <div class="eyebrow">Home Fermentation Guide</div>
+    <h1>Round Cabbage Kimchi</h1>
+    <div class="korean">양배추 김치 · Yangbaechu Kimchi</div>
+    <p class="tagline">A home-style kimchi built for UK kitchens — round cabbage in place of napa, and a butternut squash paste to bind the seasoning.</p>
+    <div class="stats">
+      <div class="stat"><b>45m</b><span>Prep</span></div>
+      <div class="stat"><b>1hr</b><span>Brine</span></div>
+      <div class="stat"><b>12–24h</b><span>Ferment</span></div>
+      <div class="stat"><b>D3–14</b><span>Best</span></div>
+    </div>
+    <div class="batch">
+      <div class="batch-label">Batch size — makes about <b id="batchLitres">2.0</b> L</div>
+      <div class="stepper">
+        <button id="dec" aria-label="Smaller batch">–</button>
+        <output id="multOut">1×</output>
+        <button id="inc" aria-label="Larger batch">+</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="tracker">
+    <div class="sec-head"><h2>Fermentation Tracker</h2><div class="rule"></div></div>
+    <div class="tracker-status" id="trackerStatus">No batch running yet — jar it up, then tap Start.</div>
+    <div class="gauge">
+      <div class="gauge-zone z-fresh"><span>Fresh</span></div>
+      <div class="gauge-zone z-best"><span>Best window</span></div>
+      <div class="gauge-zone z-past"><span>Past best</span></div>
+      <div class="marker" id="marker"></div>
+    </div>
+    <div class="gauge-labels"><span>Day 0</span><span>Day 3</span><span>Day 14</span><span>Day 20+</span></div>
+    <div class="tracker-actions">
+      <button class="btn btn-primary" id="startBatch">Start this batch</button>
+      <button class="btn btn-ghost" id="resetBatch">Reset</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Ingredients</h2><div class="rule"></div></div>
+
+    <div class="card">
+      <h3>Binding Paste</h3>
+      <div id="ing-paste"></div>
+    </div>
+    <div class="card">
+      <h3>Cabbage &amp; Brine</h3>
+      <div id="ing-cabbage"></div>
+    </div>
+    <div class="card">
+      <h3>Raw Ingredients</h3>
+      <div id="ing-raw"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Method</h2><div class="rule"></div></div>
+    <div>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <p class="step-title">Make the binding paste</p>
+          <p class="step-text">Boil the squash until tender, drain, and blend until smooth — add a splash of cooking water only if needed. Return to the pan, stir in the starch, and cook until thick. Cool completely.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <p class="step-title">Brine the cabbage</p>
+          <p class="step-text">Dissolve the salt in cold water, add the cabbage, and mix well. Leave for 1 hour, turning once or twice, then rinse well and drain 15–20 minutes.</p>
+          <div class="timer" data-timer="brine" data-seconds="3600">
+            <span class="timer-display">60:00</span>
+            <button class="btn btn-primary" data-action="start">Start</button>
+            <button class="btn btn-ghost" data-action="reset">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <p class="step-title">Mix the raw ingredients</p>
+          <p class="step-text">Combine the cooled paste with all raw ingredients. If using gochugaru, let it rest so the flakes hydrate and deepen in colour.</p>
+          <div class="timer" data-timer="rest" data-seconds="1500">
+            <span class="timer-display">25:00</span>
+            <button class="btn btn-primary" data-action="start">Start</button>
+            <button class="btn btn-ghost" data-action="reset">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <p class="step-title">Coat the cabbage</p>
+          <p class="step-text">Add the drained cabbage to the mixture. Fold and massage gently until every piece is evenly coated.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <p class="step-title">Pack the jars</p>
+          <p class="step-text">Pack firmly into sterilised jars, leaving about 2.5cm headspace. Press down to remove air pockets and keep everything submerged below the liquid.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <p class="step-title">Ferment at room temperature</p>
+          <p class="step-text">Choose how long, then leave out until small bubbles appear and the aroma turns lightly tangy. Refrigerate once done — and start the tracker above when you jar it.</p>
+          <div class="timer" data-timer="ferment" data-seconds="64800">
+            <div class="timer-choices">
+              <button class="chip" data-hours="12">12h</button>
+              <button class="chip active" data-hours="18">18h</button>
+              <button class="chip" data-hours="24">24h</button>
+            </div>
+            <span class="timer-display">18:00:00</span>
+            <button class="btn btn-primary" data-action="start">Start</button>
+            <button class="btn btn-ghost" data-action="reset">Reset</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="notes">
+    <div class="sec-head"><h2>Notes</h2><div class="rule"></div></div>
+    <p><b>Fermentation guide.</b> Days 1–2: fresh, crisp, lightly fermented. Days 3–14: the best eating window — balanced, tangy, still crunchy. After day 14: more sour and softer, with possible slight bitterness.</p>
+    <p><b>Storage.</b> Refrigerate once fermented. Use a clean utensil each time and keep the vegetables submerged. Best within two weeks for crunch and freshness.</p>
+    <p><b>Serving.</b> Steamed rice, tofu, bibimbap, noodles, fried rice, Korean pancakes or grilled vegetables.</p>
+    <p><b>Variations.</b> Traditional — napa cabbage or daikon, more gochugaru. Spring greens — swap in pak choi, mustard greens or spinach. Orchard — add julienned pear and toasted sesame seeds for a sweeter, fruitier kimchi.</p>
+  </section>
+
+  <footer>SAVES YOUR BATCH START TIME &amp; TIMERS LOCALLY IN THIS BROWSER — NO ACCOUNT, NO SERVER</footer>
+</div>
+
+<script>
+(function(){
+  // ---------- storage helper (plain browser localStorage — works with this file opened directly, no account/server needed) ----------
+  const PREFIX = 'kimchi-widget:';
+  const mem = {}; // last-resort fallback if localStorage is blocked (e.g. some file:// contexts)
+  async function sGet(key){
+    try{
+      const raw = localStorage.getItem(PREFIX + key);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return mem[key] ?? null; }
+  }
+  async function sSet(key, value){
+    try{
+      localStorage.setItem(PREFIX + key, JSON.stringify(value));
+      return;
+    }catch(e){}
+    mem[key] = value;
+  }
+  async function sDelete(key){
+    try{
+      localStorage.removeItem(PREFIX + key);
+      return;
+    }catch(e){}
+    delete mem[key];
+  }
+
+  // ---------- ingredient data ----------
+  const paste = [
+    { name:'Butternut squash, peeled &amp; diced (2–3cm)', amt:250, unit:'g' },
+    { name:'Glutinous rice flour <span style="opacity:.6">(or plain flour / blended cooked rice)</span>', amt:2, unit:'tbsp' },
+  ];
+  const cabbage = [
+    { name:'Round cabbage, cut into 3–4cm pieces', amt:800, unit:'g' },
+    { name:'Coarse sea salt', amt:75, unit:'g' },
+    { name:'Cold water', amt:1, unit:'L' },
+  ];
+  const raw = [
+    { name:'Apple, julienned', amt:1, unit:'medium' },
+    { name:'Onion, coarsely chopped', amt:1, unit:'medium' },
+    { name:'Garlic cloves, chopped or grated', amt:7.5, unit:'cloves' },
+    { name:'Fresh ginger, finely grated', amt:1, unit:'piece (5–10mm)' },
+    { name:'Sweet pointed red peppers, diced', amt:2, unit:'' },
+    { name:'Red chillies, chopped <span style="opacity:.6">(optional)</span>', amt:1.5, unit:'' },
+    { name:'Spring onions, cut diagonally', amt:3.5, unit:'' },
+    { name:'Carrot, coarsely grated', amt:1, unit:'medium' },
+    { name:'Sweet potato, grated <span style="opacity:.6">(optional)</span>', amt:200, unit:'g' },
+    { name:'Sugar', amt:1, unit:'tbsp' },
+    { name:'Fish sauce <span style="opacity:.6">(or veg. alternative)</span>', amt:4.5, unit:'tbsp' },
+    { name:'Gochugaru flakes <span style="opacity:.6">(don\u2019t skip — see notes below)</span>', amt:3, unit:'tbsp' },
+  ];
+
+  function fmt(n){
+    const r = Math.round(n * 100) / 100;
+    return r % 1 === 0 ? r.toString() : r.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+  }
+
+  function renderIngredients(mult){
+    const groups = [['ing-paste',paste],['ing-cabbage',cabbage],['ing-raw',raw]];
+    groups.forEach(([id, list])=>{
+      const el = document.getElementById(id);
+      el.innerHTML = list.map(i => `
+        <div class="ing-row">
+          <span>${i.name}</span>
+          <span class="ing-amt">${fmt(i.amt*mult)}${i.unit ? ' '+i.unit : ''}</span>
+        </div>`).join('');
+    });
+    document.getElementById('batchLitres').textContent = fmt(2*mult);
+  }
+
+  // ---------- batch multiplier ----------
+  let mult = 1;
+  const step = 0.5, min = 0.5, max = 3;
+  function updateMultUI(){
+    document.getElementById('multOut').textContent = fmt(mult) + '×';
+    renderIngredients(mult);
+  }
+  document.getElementById('inc').addEventListener('click', ()=>{ mult = Math.min(max, mult+step); updateMultUI(); });
+  document.getElementById('dec').addEventListener('click', ()=>{ mult = Math.max(min, mult-step); updateMultUI(); });
+  updateMultUI();
+
+  // ---------- step timers (persisted end-timestamps) ----------
+  function formatDuration(sec, showHours){
+    sec = Math.max(0, Math.round(sec));
+    const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+    if(showHours) return [h,m,s].map(v=>String(v).padStart(2,'0')).join(':');
+    return [m,s].map(v=>String(v).padStart(2,'0')).join(':');
+  }
+
+  document.querySelectorAll('.timer').forEach(async (box)=>{
+    const key = 'timer:' + box.dataset.timer;
+    const showHours = box.dataset.timer === 'ferment';
+    const display = box.querySelector('.timer-display');
+    const startBtn = box.querySelector('[data-action="start"]');
+    const resetBtn = box.querySelector('[data-action="reset"]');
+    let seconds = parseInt(box.dataset.seconds, 10);
+    let interval = null;
+
+    // ferment step has selectable duration chips
+    box.querySelectorAll('.chip').forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        box.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        seconds = parseInt(chip.dataset.hours,10) * 3600;
+        display.textContent = formatDuration(seconds, showHours);
+      });
+    });
+
+    function tick(endTs){
+      const remaining = Math.round((endTs - Date.now())/1000);
+      if(remaining <= 0){
+        display.textContent = showHours ? '00:00:00' : '00:00';
+        display.style.color = 'var(--cabbage-deep)';
+        startBtn.textContent = 'Done';
+        clearInterval(interval);
+        return;
+      }
+      display.textContent = formatDuration(remaining, showHours);
+    }
+
+    async function resume(){
+      const stored = await sGet(key);
+      if(stored && stored.endTs > Date.now()){
+        startBtn.textContent = 'Running…';
+        tick(stored.endTs);
+        interval = setInterval(()=>tick(stored.endTs), 1000);
+      }
+    }
+    resume();
+
+    startBtn.addEventListener('click', async ()=>{
+      if(startBtn.textContent === 'Running…') return;
+      const endTs = Date.now() + seconds*1000;
+      await sSet(key, { endTs });
+      startBtn.textContent = 'Running…';
+      display.style.color = '';
+      clearInterval(interval);
+      tick(endTs);
+      interval = setInterval(()=>tick(endTs), 1000);
+    });
+
+    resetBtn.addEventListener('click', async ()=>{
+      clearInterval(interval);
+      await sDelete(key);
+      seconds = parseInt(box.dataset.seconds, 10);
+      const activeChip = box.querySelector('.chip.active');
+      if(activeChip) seconds = parseInt(activeChip.dataset.hours,10) * 3600;
+      display.textContent = formatDuration(seconds, showHours);
+      display.style.color = '';
+      startBtn.textContent = 'Start';
+    });
+  });
+
+  // ---------- fermentation day tracker (signature element) ----------
+  const trackerStatus = document.getElementById('trackerStatus');
+  const marker = document.getElementById('marker');
+  const startBatchBtn = document.getElementById('startBatch');
+  const resetBatchBtn = document.getElementById('resetBatch');
+  const SCALE_DAYS = 20; // gauge represents day 0 -> day 20+
+
+  function setMarker(days){
+    const pct = Math.min(100, Math.max(0, (days/SCALE_DAYS)*100));
+    marker.style.left = pct + '%';
+  }
+
+  function zoneFor(days){
+    if(days < 3) return { label:'fresh & crisp', note:'still settling in — give it a few more days.' };
+    if(days <= 14) return { label:'in the best window', note:'balanced, tangy, still crunchy. Enjoy now.' };
+    return { label:'past its best', note:'more sour and softer — still fine to eat, just check for bitterness.' };
+  }
+
+  async function renderTracker(){
+    const stored = await sGet('batch:start');
+    if(!stored || !stored.startTs){
+      trackerStatus.textContent = 'No batch running yet — jar it up, then tap Start.';
+      setMarker(0);
+      return;
+    }
+    const days = (Date.now() - stored.startTs) / 86400000;
+    const zone = zoneFor(days);
+    trackerStatus.innerHTML = `<b>Day ${Math.floor(days)}</b> since jarring — ${zone.label}. ${zone.note}`;
+    setMarker(days);
+  }
+
+  startBatchBtn.addEventListener('click', async ()=>{
+    await sSet('batch:start', { startTs: Date.now() });
+    renderTracker();
+  });
+  resetBatchBtn.addEventListener('click', async ()=>{
+    await sDelete('batch:start');
+    renderTracker();
+  });
+
+  renderTracker();
+  setInterval(renderTracker, 60000);
+})();
+</script>
+</body>
+</html>
