@@ -1,0 +1,7 @@
+{
+  "recipes": [
+    { "slug": "kimchi", "title": "Home-Style Korean Round Cabbage Kimchi", "type": "ferment" },
+    { "slug": "paella-stuffed-tomatoes", "title": "Romesco Paella-Stuffed Tomatoes with Bravas-Style Jersey Royals", "type": "dish" },
+    { "slug": "fancy-housemade-soda", "title": "Fancy Housemade Soda", "type": "drink" }
+  ]
+}
