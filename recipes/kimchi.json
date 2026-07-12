@@ -53,33 +53,39 @@
     {
       "number": 1,
       "title": "Make the binding paste",
+      "component": "Binding Paste",
       "body": "Boil the squash until tender. Drain and blend until smooth, adding a little cooking water only if needed. Return to the pan. Stir in the chosen starch. Cook for 2-4 minutes until thick. Cool completely."
     },
     {
       "number": 2,
       "title": "Brine the cabbage",
+      "component": "Kimchi Prep",
       "body": "Dissolve the salt in the cold water. Add the cabbage. Mix well. Leave for 1 hour, turning once or twice. Rinse well and drain for 15-20 minutes.",
       "timer": { "id": "brine", "label": "Brine the cabbage", "seconds": 3600 }
     },
     {
       "number": 3,
       "title": "Mix the raw ingredients",
+      "component": "Kimchi Prep",
       "body": "Combine the cooled paste with all raw ingredients. If using gochugaru, leave for 20-30 minutes so the flakes hydrate and deepen in colour.",
       "timer": { "id": "rest", "label": "Rest the gochugaru", "seconds": 1500 }
     },
     {
       "number": 4,
       "title": "Coat the cabbage",
+      "component": "Kimchi Prep",
       "body": "Add the drained cabbage. Fold and massage gently until every piece is evenly coated."
     },
     {
       "number": 5,
       "title": "Pack the jars",
+      "component": "Kimchi Prep",
       "body": "Pack firmly into sterilised jars. Leave about 2.5cm headspace. Press down to remove air pockets and keep the vegetables below the liquid."
     },
     {
       "number": 6,
       "title": "Ferment",
+      "component": "Kimchi Fermentation",
       "body": "Leave at room temperature for 12-24 hours. When small bubbles appear and the aroma turns lightly tangy, refrigerate. Start the fermentation tracker below once jars are packed.",
       "timer": { "id": "ferment", "label": "Ferment at room temperature", "seconds": 64800 }
     }

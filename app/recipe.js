@@ -50,6 +50,48 @@ function initTheme(){
 }
 initTheme();
 
+/* ---------- text size (global preference, not scoped to any recipe) ---------- */
+
+const TEXT_SCALE_KEY = 'recipe-app:text-scale';
+const TEXT_SCALE_STEPS = [87.5, 100, 112.5, 125, 137.5];
+
+function getStoredTextScale(){
+  try{
+    const v = localStorage.getItem(TEXT_SCALE_KEY);
+    return v ? parseFloat(v) : 100;
+  }catch(e){ return 100; }
+}
+function setStoredTextScale(v){
+  try{ localStorage.setItem(TEXT_SCALE_KEY, String(v)); }catch(e){}
+}
+function applyTextScale(v){
+  document.documentElement.style.fontSize = v + '%';
+}
+function textScaleButtonLabel(v){
+  return `Aa ${v}%`;
+}
+function cycleTextScale(){
+  const current = getStoredTextScale();
+  let idx = TEXT_SCALE_STEPS.indexOf(current);
+  if(idx === -1) idx = TEXT_SCALE_STEPS.indexOf(100);
+  idx = (idx + 1) % TEXT_SCALE_STEPS.length;
+  const next = TEXT_SCALE_STEPS[idx];
+  setStoredTextScale(next);
+  applyTextScale(next);
+  const btn = document.getElementById('textScaleToggle');
+  if(btn) btn.textContent = textScaleButtonLabel(next);
+}
+function initTextScale(){
+  const current = getStoredTextScale();
+  applyTextScale(current);
+  const btn = document.getElementById('textScaleToggle');
+  if(btn){
+    btn.textContent = textScaleButtonLabel(current);
+    btn.addEventListener('click', cycleTextScale);
+  }
+}
+initTextScale();
+
 /* ---------- small utilities ---------- */
 
 function escapeHtml(str){
@@ -147,12 +189,15 @@ function renderIngredientAmount(item, mult){
 
 function stageColour(name){ return STAGE_COLOURS[name] || 'var(--stage-green)'; }
 
-function renderGauge(stages){
-  const maxToDay = Math.max(...stages.map(s => s.toDay != null ? s.toDay : (s.fromDay + 10)));
-  return stages.map(s => {
+function maxTrackerDay(stages){
+  return Math.max(...stages.map(s => s.toDay != null ? s.toDay : (s.fromDay + 10)));
+}
+
+function renderGauge(stages, maxToDay){
+  return stages.map((s, i) => {
     const from = s.fromDay || 0;
-    const to = s.toDay != null ? s.toDay : maxToDay;
-    const widthPct = ((to - from) / maxToDay) * 100;
+    const next = (i < stages.length - 1) ? (stages[i+1].fromDay || 0) : maxToDay;
+    const widthPct = ((next - from) / maxToDay) * 100;
     return `<div class="gauge-zone" style="flex:0 0 ${widthPct}%; background:${stageColour(s.colour)};">
       <span>${escapeHtml(s.label)}</span>
     </div>`;
@@ -168,11 +213,12 @@ function stageForDay(stages, day){
   return stages[stages.length - 1];
 }
 
-function renderAxis(stages){
+function renderAxis(stages, maxToDay){
   return stages.map((s, i) => {
     const isLast = i === stages.length - 1;
     const label = (isLast && s.toDay == null) ? `Day ${s.fromDay}+` : `Day ${s.fromDay}`;
-    return `<span>${escapeHtml(label)}</span>`;
+    const pct = ((s.fromDay || 0) / maxToDay) * 100;
+    return `<span style="position:absolute; left:${pct}%;">${escapeHtml(label)}</span>`;
   }).join('');
 }
 
@@ -201,13 +247,13 @@ function renderFermentationTracker(recipe, slug, container){
     }
     const days = (Date.now() - stored.startTs) / 86400000;
     const stage = stageForDay(tracker.stages, days);
-    const maxToDay = Math.max(...tracker.stages.map(s => s.toDay != null ? s.toDay : (s.fromDay + 10)));
+    const maxToDay = maxTrackerDay(tracker.stages);
     const pct = Math.min(100, Math.max(0, (days / maxToDay) * 100));
     const fullText = stage.description ? `${stage.label}. ${stage.description}` : stage.label;
     slot.innerHTML = `<div class="tracker">
         <div class="tracker-status" aria-live="polite"><b>Day ${Math.floor(days)}</b> — ${escapeHtml(fullText)}</div>
-        <div class="gauge">${renderGauge(tracker.stages)}<div class="marker" style="left:${pct}%;"></div></div>
-        <div class="gauge-axis">${renderAxis(tracker.stages)}</div>
+        <div class="gauge">${renderGauge(tracker.stages, maxToDay)}<div class="marker" style="left:${pct}%;"></div></div>
+        <div class="gauge-axis">${renderAxis(tracker.stages, maxToDay)}</div>
         <div class="tracker-actions">
           <button class="btn btn-on-dark" id="resetTrackerBtn">Reset</button>
         </div>

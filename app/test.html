@@ -136,6 +136,45 @@ test('formatDuration formats over an hour as hh:mm:ss', () => {
   assertEqual(formatDuration(3661, true), '01:01:01');
 });
 
+test('gauge zone widths tile contiguously and sum to exactly 100% (regression: previously left gaps at every boundary)', () => {
+  const stages = [
+    { id:'early', label:'Fresh', fromDay:0, toDay:2, colour:'yellow' },
+    { id:'peak',  label:'Best',  fromDay:3, toDay:14, colour:'green' },
+    { id:'past',  label:'Past',  fromDay:15, toDay:20, colour:'amber' },
+    { id:'avoid', label:'Avoid', fromDay:21, colour:'red' }
+  ];
+  const maxToDay = maxTrackerDay(stages);
+  const html = renderGauge(stages, maxToDay);
+  const widths = [...html.matchAll(/flex:0 0 ([\d.]+)%/g)].map(m => parseFloat(m[1]));
+  assertEqual(widths.length, 4, 'expected one zone per stage');
+  const sum = widths.reduce((a,b)=>a+b, 0);
+  assertTrue(Math.abs(sum - 100) < 0.01, `zone widths should sum to 100%, got ${sum}`);
+});
+
+test('axis label positions exactly match gauge zone boundary starts (regression: previously used even spacing instead of true day position)', () => {
+  const stages = [
+    { id:'early', label:'Fresh', fromDay:0, toDay:2, colour:'yellow' },
+    { id:'peak',  label:'Best',  fromDay:3, toDay:14, colour:'green' },
+    { id:'past',  label:'Past',  fromDay:15, toDay:20, colour:'amber' },
+    { id:'avoid', label:'Avoid', fromDay:21, colour:'red' }
+  ];
+  const maxToDay = maxTrackerDay(stages);
+  const widths = [...renderGauge(stages, maxToDay).matchAll(/flex:0 0 ([\d.]+)%/g)].map(m => parseFloat(m[1]));
+  let cumulative = 0;
+  const boundaryStarts = widths.map(w => { const s = cumulative; cumulative += w; return s; });
+  const axisPositions = [...renderAxis(stages, maxToDay).matchAll(/left:([\d.]+)%/g)].map(m => parseFloat(m[1]));
+  boundaryStarts.forEach((b, i) => {
+    assertTrue(Math.abs(b - axisPositions[i]) < 0.01, `axis label ${i} at ${axisPositions[i]}% should match zone boundary at ${b}%`);
+  });
+});
+
+test('text size cycles through all five steps and wraps around', () => {
+  setStoredTextScale(100);
+  const seen = [];
+  for(let i = 0; i < 5; i++){ cycleTextScale(); seen.push(getStoredTextScale()); }
+  assertEqual(JSON.stringify(seen), JSON.stringify([112.5, 125, 137.5, 87.5, 100]), `unexpected cycle order: ${seen.join(', ')}`);
+});
+
 /* ---------------- INTERFACE TESTS (cross-recipe storage isolation) ---------------- */
 
 currentGroup = 'Interface';
@@ -188,6 +227,15 @@ async function runIntegrationTests(){
       assertEqual(errs.length, 0, errs.join('; '));
     });
   }
+
+  await testAsync('kimchi steps all carry a component tag (Binding Paste / Kimchi Prep / Kimchi Fermentation)', async () => {
+    const res = await fetch('../recipes/kimchi.json');
+    const data = await res.json();
+    const missing = data.steps.filter(s => !s.component).map(s => s.number);
+    assertTrue(missing.length === 0, `steps missing a component tag: ${missing.join(', ')}`);
+    const distinctComponents = [...new Set(data.steps.map(s => s.component))];
+    assertEqual(distinctComponents.length, 3, `expected 3 distinct components, got: ${distinctComponents.join(', ')}`);
+  });
 
   await testAsync('manifest.json loads and every listed recipe file actually exists', async () => {
     const res = await fetch('../recipes/manifest.json');
