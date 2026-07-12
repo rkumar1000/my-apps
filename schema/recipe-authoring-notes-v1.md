@@ -31,6 +31,12 @@ Fixed structure only for what every recipe shares (title, ingredients, steps). F
 
 **Attribution** — `author` is the original source; `adaptedBy` is you, when you've changed it meaningfully. Either can appear alone.
 
+**Category badge** — `category` is a single short display word ("Ferment", "Dish", "Drink"), not the full multi-dimensional classification (cuisine/dietary/difficulty) discussed separately — that's a bigger, still-undecided future addition. Don't overload this field with more than one value.
+
+**Fermentation stage wording** — keep `label` to 2-3 words (it renders inside a coloured chip, so long sentences will look cramped); put the fuller explanation in the optional `description` field instead, which appears in the status line above the gauge.
+
+**Component badges are now genuinely visible**, not just internal bookkeeping — a step's `component` renders as a small coloured tag above it. Worth adding to any recipe with real interleaved components (sauce/potatoes/tomatoes running in parallel); skip it for simple single-track recipes where every step is already sequential.
+
 ## Deliberately deferred (not in v1)
-- **Images** — no recipe has forced this question yet with real content; revisit when one does rather than guessing the shape now.
+- **Images** — still deferred as of this pass. A live thumbnail test was planned, but this environment doesn't currently have an image-generation tool available, so nothing was added to the schema speculatively. Revisit once either a real image source or generation tool is actually in hand.
 - **PWA / offline caching / update detection** — hold until the shell and JSON schema are locked and a handful of real recipes are in place. Adding caching while the shell is still actively changing just fights the workflow.

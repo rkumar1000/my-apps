@@ -21,6 +21,10 @@
       "items": { "type": "string" },
       "description": "Native-language name, transliteration, or other alternate titles, e.g. ['양배추 김치', 'Yangbaechu Kimchi']."
     },
+    "category": {
+      "type": "string",
+      "description": "A single, short display label (e.g. 'Ferment', 'Dish', 'Drink'). Shown as a small badge near the title. Not a multi-dimensional classification system — just enough for a quick visual cue on the recipe page itself."
+    },
 
     "attribution": { "$ref": "#/$defs/attribution" },
     "servings": { "$ref": "#/$defs/servings" },
@@ -148,7 +152,7 @@
         "id": { "type": "string", "description": "Optional stable id, mainly needed if another step references this one via 'after'." },
         "title": { "type": "string" },
         "body": { "type": "string" },
-        "component": { "type": "string", "description": "Light display-only tag for grouping in the UI (e.g. 'sauce', 'potatoes'). Never affects execution order." },
+        "component": { "type": "string", "description": "Displayed as a small coloured badge above the step (e.g. 'sauce', 'potatoes') so interleaved multi-component recipes stay easy to track mid-cook. Purely visual — never affects execution order." },
         "temperature": { "type": "string", "description": "e.g. '200°C fan'." },
         "elapsedMinutes": {
           "type": "object",
@@ -197,10 +201,11 @@
       "additionalProperties": false,
       "properties": {
         "id": { "type": "string" },
-        "label": { "type": "string" },
+        "label": { "type": "string", "description": "SHORT tag shown inside the gauge chip itself, e.g. 'Best window'. Keep to 2-3 words — long sentences here will look cramped in the coloured bar." },
+        "description": { "type": "string", "description": "Optional fuller sentence shown in the status line above the gauge, e.g. 'Balanced, tangy, still crunchy — the best time to eat it.' Falls back to just the label if omitted." },
         "fromDay": { "type": "number" },
         "toDay": { "type": "number", "description": "Omit on the final stage for an open-ended range." },
-        "colour": { "type": "string", "description": "e.g. 'yellow', 'green', 'amber', 'red'. Avoid red unless genuinely past sensible eating, not just past peak." }
+        "colour": { "type": "string", "description": "e.g. 'yellow', 'green', 'amber', 'red'. Red is reserved for a genuine 'well past its best' cutoff, not merely 'past peak' — avoid overstating food-safety risk in the wording that goes with it." }
       }
     },
 

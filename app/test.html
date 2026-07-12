@@ -158,6 +158,20 @@ test('fermentation tracker start times are namespaced per recipe', () => {
   sDelete('__test_recipe_b','batch-start');
 });
 
+test('batch multiplier persists per recipe (survives navigating away and back)', () => {
+  sSet('__test_recipe_a', 'batch-multiplier', 1.5);
+  assertEqual(sGet('__test_recipe_a','batch-multiplier'), 1.5, 'multiplier should be readable back exactly as saved');
+  sDelete('__test_recipe_a','batch-multiplier');
+  assertEqual(sGet('__test_recipe_a','batch-multiplier'), null, 'should be gone after reset');
+});
+
+test('step completion is namespaced per recipe and persists', () => {
+  sSet('__test_recipe_a', 'step-done:3', true);
+  assertTrue(!!sGet('__test_recipe_a','step-done:3'), 'step 3 should be marked done for recipe a');
+  assertTrue(!sGet('__test_recipe_b','step-done:3'), 'the same step number on a different recipe should be unaffected');
+  sDelete('__test_recipe_a','step-done:3');
+});
+
 /* ---------------- INTEGRATION TESTS (fetch the real files) ---------------- */
 
 currentGroup = 'Integration';

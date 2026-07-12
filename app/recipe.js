@@ -9,6 +9,47 @@ const STAGE_COLOURS = {
   red:    'var(--stage-red)'
 };
 
+/* ---------- theme (global preference, not scoped to any recipe) ---------- */
+
+const THEME_KEY = 'recipe-app:theme';
+
+function getStoredTheme(){
+  try{ return localStorage.getItem(THEME_KEY); }catch(e){ return null; }
+}
+function setStoredTheme(theme){
+  try{
+    if(theme) localStorage.setItem(THEME_KEY, theme);
+    else localStorage.removeItem(THEME_KEY);
+  }catch(e){}
+}
+function applyTheme(theme){
+  if(theme) document.documentElement.setAttribute('data-theme', theme);
+  else document.documentElement.removeAttribute('data-theme');
+}
+function themeButtonLabel(theme){
+  if(theme === 'dark') return '🌙 Dark';
+  if(theme === 'light') return '☀️ Light';
+  return '🌓 Auto';
+}
+function cycleTheme(){
+  const current = getStoredTheme();
+  const next = current === null ? 'dark' : (current === 'dark' ? 'light' : null);
+  setStoredTheme(next);
+  applyTheme(next);
+  const btn = document.getElementById('themeToggle');
+  if(btn) btn.textContent = themeButtonLabel(next);
+}
+function initTheme(){
+  const current = getStoredTheme();
+  applyTheme(current);
+  const btn = document.getElementById('themeToggle');
+  if(btn){
+    btn.textContent = themeButtonLabel(current);
+    btn.addEventListener('click', cycleTheme);
+  }
+}
+initTheme();
+
 /* ---------- small utilities ---------- */
 
 function escapeHtml(str){
@@ -127,6 +168,14 @@ function stageForDay(stages, day){
   return stages[stages.length - 1];
 }
 
+function renderAxis(stages){
+  return stages.map((s, i) => {
+    const isLast = i === stages.length - 1;
+    const label = (isLast && s.toDay == null) ? `Day ${s.fromDay}+` : `Day ${s.fromDay}`;
+    return `<span>${escapeHtml(label)}</span>`;
+  }).join('');
+}
+
 function renderFermentationTracker(recipe, slug, container){
   const tracker = recipe.fermentationTracker;
   if(!tracker || !Array.isArray(tracker.stages) || tracker.stages.length === 0) return;
@@ -154,9 +203,11 @@ function renderFermentationTracker(recipe, slug, container){
     const stage = stageForDay(tracker.stages, days);
     const maxToDay = Math.max(...tracker.stages.map(s => s.toDay != null ? s.toDay : (s.fromDay + 10)));
     const pct = Math.min(100, Math.max(0, (days / maxToDay) * 100));
+    const fullText = stage.description ? `${stage.label}. ${stage.description}` : stage.label;
     slot.innerHTML = `<div class="tracker">
-        <div class="tracker-status" aria-live="polite"><b>Day ${Math.floor(days)}</b> — ${escapeHtml(stage.label)}</div>
+        <div class="tracker-status" aria-live="polite"><b>Day ${Math.floor(days)}</b> — ${escapeHtml(fullText)}</div>
         <div class="gauge">${renderGauge(tracker.stages)}<div class="marker" style="left:${pct}%;"></div></div>
+        <div class="gauge-axis">${renderAxis(tracker.stages)}</div>
         <div class="tracker-actions">
           <button class="btn btn-on-dark" id="resetTrackerBtn">Reset</button>
         </div>
@@ -224,7 +275,7 @@ function attachTimer(box, timer, slug){
 /* ---------- main render ---------- */
 
 function renderRecipe(recipe, slug, root){
-  const mult = { value: 1 };
+  const mult = { value: sGet(slug, 'batch-multiplier') || 1 };
 
   // ---- header ----
   const header = document.createElement('div');
@@ -241,6 +292,7 @@ function renderRecipe(recipe, slug, root){
   header.innerHTML = `
     <div class="eyebrow">Recipe</div>
     <h1>${escapeHtml(recipe.title)}</h1>
+    ${recipe.category ? `<span class="badge badge-meta" style="margin-bottom:12px;">${escapeHtml(recipe.category)}</span>` : ''}
     ${recipe.alternateNames ? `<div class="alt-names">${recipe.alternateNames.map(escapeHtml).join(' · ')}</div>` : ''}
     ${recipe.description ? `<p class="description">${escapeHtml(recipe.description)}</p>` : ''}
     ${recipe.attribution ? `<div class="attribution">${recipe.attribution.author ? `By ${escapeHtml(recipe.attribution.author)}` : ''}${recipe.attribution.adaptedBy ? `${recipe.attribution.author?' · ':''}Adapted by ${escapeHtml(recipe.attribution.adaptedBy)}` : ''}</div>` : ''}
@@ -287,10 +339,12 @@ function renderRecipe(recipe, slug, root){
   if(header.querySelector('#inc')){
     header.querySelector('#inc').addEventListener('click', () => {
       mult.value = Math.min(3, mult.value + 0.5);
+      sSet(slug, 'batch-multiplier', mult.value);
       updateBatchStats(); renderIngredients();
     });
     header.querySelector('#dec').addEventListener('click', () => {
       mult.value = Math.max(0.5, mult.value - 0.5);
+      sSet(slug, 'batch-multiplier', mult.value);
       updateBatchStats(); renderIngredients();
     });
   }
@@ -303,18 +357,32 @@ function renderRecipe(recipe, slug, root){
 
   recipe.steps.forEach(step => {
     const div = document.createElement('div');
-    div.className = 'step';
+    const stepKey = step.id || String(step.number);
+    const isDone = !!sGet(slug, `step-done:${stepKey}`);
+    div.className = 'step' + (isDone ? ' done' : '');
+
     let metaParts = [];
     if(step.temperature) metaParts.push(step.temperature);
     if(step.elapsedMinutes){
       const em = step.elapsedMinutes;
       metaParts.push(em.to != null && em.to !== em.from ? `${em.from}–${em.to} min mark` : `${em.from} min mark`);
     }
+    const metaHtml = metaParts.length
+      ? `<div class="step-meta-row">${metaParts.map(m => `<span class="badge badge-meta">${escapeHtml(m)}</span>`).join('')}</div>`
+      : '';
+    const componentHtml = step.component
+      ? `<span class="badge badge-component">${escapeHtml(step.component)}</span><br>`
+      : '';
+
     div.innerHTML = `
-      <div class="step-num">${step.number}</div>
+      <div class="step-num-col">
+        <input type="checkbox" class="step-check" aria-label="Mark step ${step.number} as done" ${isDone ? 'checked' : ''}>
+        <div class="step-num">${step.number}</div>
+      </div>
       <div class="step-body">
+        ${componentHtml}
         ${step.title ? `<p class="step-title">${escapeHtml(step.title)}</p>` : ''}
-        ${metaParts.length ? `<p class="step-meta">${metaParts.map(escapeHtml).join(' · ')}</p>` : ''}
+        ${metaHtml}
         <p class="step-text">${formatStepBody(step.body)}</p>
         ${step.timer ? `<div class="timer" data-timer-id="${escapeHtml(step.timer.id)}">
           <span class="timer-display">${formatDuration(step.timer.seconds, step.timer.seconds>=3600)}</span>
@@ -325,6 +393,16 @@ function renderRecipe(recipe, slug, root){
       </div>`;
     stepsEl.appendChild(div);
     if(step.timer) attachTimer(div.querySelector('.timer'), step.timer, slug);
+
+    div.querySelector('.step-check').addEventListener('change', (e) => {
+      if(e.target.checked){
+        sSet(slug, `step-done:${stepKey}`, true);
+        div.classList.add('done');
+      } else {
+        sDelete(slug, `step-done:${stepKey}`);
+        div.classList.remove('done');
+      }
+    });
   });
 
   // ---- fermentation tracker (optional, only if present) ----
@@ -333,7 +411,7 @@ function renderRecipe(recipe, slug, root){
   // ---- variations (optional) ----
   if(Array.isArray(recipe.variations) && recipe.variations.length){
     const s = document.createElement('section');
-    s.innerHTML = `<div class="sec-head"><h2>Variations</h2><div class="rule"></div></div>
+    s.innerHTML = `<div class="sec-head"><h2>Recipe Variations</h2><div class="rule"></div></div>
       <div class="variations-list">${recipe.variations.map(v => `
         <div class="item"><b>${escapeHtml(v.name)}</b><p>${escapeHtml(v.description)}</p></div>`).join('')}</div>`;
     root.appendChild(s);
