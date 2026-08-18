@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "recipe-schema-v1.json",
+  "title": "Recipe Schema v1 (development)",
+  "description": "Working schema for the fermentation/recipe widget framework. Development draft — expect changes as more recipe types are tested. Core rule: only title, ingredients and steps are required. Every other field is optional and should be OMITTED entirely (never null, empty string, or 'n/a') when it doesn't apply to a given recipe.",
+  "type": "object",
+  "required": ["title", "ingredients", "steps"],
+  "additionalProperties": false,
+  "properties": {
+
+    "title": {
+      "type": "string",
+      "description": "Recipe name."
+    },
+    "description": {
+      "type": "string",
+      "description": "Short intro / tagline paragraph, as usually seen under a recipe title."
+    },
+    "alternateNames": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Native-language name, transliteration, or other alternate titles, e.g. ['양배추 김치', 'Yangbaechu Kimchi']."
+    },
+    "category": {
+      "type": "string",
+      "description": "A single, short display label (e.g. 'Ferment', 'Dish', 'Drink'). Shown as a small badge near the title. Not a multi-dimensional classification system — just enough for a quick visual cue on the recipe page itself."
+    },
+
+    "attribution": { "$ref": "#/$defs/attribution" },
+    "servings": { "$ref": "#/$defs/servings" },
+    "yield": { "$ref": "#/$defs/yield" },
+
+    "times": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/timeEntry" },
+      "description": "Flexible labelled list — prep/cook/oven temps/whatever the recipe actually has. No fixed keys; omit entirely if a recipe has no meaningful timing info."
+    },
+
+    "equipment": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Only include as a list when 2+ distinct tools are worth flagging up front (e.g. shaker, jigger). A single passing tool mention should just stay in the step text instead."
+    },
+
+    "ingredients": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ingredientGroup" },
+      "minItems": 1
+    },
+
+    "steps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/step" },
+      "minItems": 1,
+      "description": "One flat, ordered array — authored in the sequence the source recipe naturally describes. Do not build a dependency graph; use 'after' only for genuine hard dependencies."
+    },
+
+    "fermentationTracker": {
+      "$ref": "#/$defs/fermentationTracker",
+      "description": "Only for genuine ferments (kimchi, sauerkraut, pickles). Most recipes should use a 'Storage'-labelled entry in notes instead — do not add a tracker just because something keeps for a few days."
+    },
+
+    "variations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/variation" },
+      "description": "Named alternative versions of the recipe (e.g. 'Traditional', 'Orchard'). Distinct from notes — has its own identity in most published recipes."
+    },
+
+    "notes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/note" },
+      "description": "Numbered/labelled list of standalone notes — storage, flavour profile, make-ahead tips, ad-hoc yield guidance, or anything else that doesn't have its own dedicated field. This is the general-purpose catch-all for the 80/20 long tail."
+    }
+  },
+
+  "$defs": {
+
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "author": { "type": "string", "description": "Original recipe source/author, if known." },
+        "adaptedBy": { "type": "string", "description": "Person who adapted this version, if different from the author." }
+      }
+    },
+
+    "servings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "quantity": { "type": "number" },
+        "unit": { "type": "string", "description": "e.g. 'servings', 'people'." },
+        "note": { "type": "string", "description": "e.g. 'today, with easy repeat for 2 more tomorrow'." }
+      }
+    },
+
+    "yield": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "quantity": { "type": "number" },
+        "unit": { "type": "string", "description": "Free text — 'litres', 'jar', 'pitcher', 'batch'. Not restricted to a fixed unit list." }
+      }
+    },
+
+    "timeEntry": {
+      "type": "object",
+      "required": ["label", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" },
+        "value": { "type": "string" }
+      }
+    },
+
+    "ingredientGroup": {
+      "type": "object",
+      "required": ["id", "title", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ingredientItem" }
+        }
+      }
+    },
+
+    "ingredientItem": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "amount": { "type": "number", "description": "Omit for free-text/to-taste items with no real quantity." },
+        "unit": { "type": "string" },
+        "scaleMode": {
+          "type": "string",
+          "description": "Free-form hint for the shell's scaling display logic (e.g. 'weight', 'volume', 'whole', 'whole_range'). Not a strict enum — apply common sense, don't over-engineer new modes."
+        },
+        "display": { "type": "string", "description": "Optional override string for cases where scaled math alone reads badly, e.g. '7-8 cloves'." }
+      }
+    },
+
+    "step": {
+      "type": "object",
+      "required": ["number", "body"],
+      "additionalProperties": false,
+      "properties": {
+        "number": { "type": "integer" },
+        "id": { "type": "string", "description": "Optional stable id, mainly needed if another step references this one via 'after'." },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "component": { "type": "string", "description": "Displayed as a small coloured badge above the step (e.g. 'sauce', 'potatoes') so interleaved multi-component recipes stay easy to track mid-cook. Purely visual — never affects execution order." },
+        "temperature": { "type": "string", "description": "e.g. '200°C fan'." },
+        "elapsedMinutes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "from": { "type": "number" },
+            "to": { "type": "number" }
+          },
+          "description": "For oven-timeline style steps keyed to elapsed time rather than pure sequence."
+        },
+        "timer": { "$ref": "#/$defs/timer" },
+        "after": { "type": "string", "description": "Id of a step this one has a genuine hard dependency on. Rare — use only when order truly matters, not as a default." }
+      }
+    },
+
+    "timer": {
+      "type": "object",
+      "required": ["id", "label", "seconds"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "label": {
+          "type": "string",
+          "description": "Always name the THING, not the action — e.g. 'Roast Jersey Royals', not 'Oven'. Critical when a recipe has multiple concurrent timers."
+        },
+        "seconds": { "type": "integer" }
+      }
+    },
+
+    "fermentationTracker": {
+      "type": "object",
+      "required": ["stages"],
+      "additionalProperties": false,
+      "properties": {
+        "stages": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/fermentationStage" },
+          "description": "2-4 stages typical (e.g. too early / peak / past peak / avoid). Day thresholds are per-recipe data, not hardcoded in the shell."
+        }
+      }
+    },
+
+    "fermentationStage": {
+      "type": "object",
+      "required": ["id", "label", "colour"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string", "description": "SHORT tag shown inside the gauge chip itself, e.g. 'Best window'. Keep to 2-3 words — long sentences here will look cramped in the coloured bar." },
+        "description": { "type": "string", "description": "Optional fuller sentence shown in the status line above the gauge, e.g. 'Balanced, tangy, still crunchy — the best time to eat it.' Falls back to just the label if omitted." },
+        "fromDay": { "type": "number" },
+        "toDay": { "type": "number", "description": "Omit on the final stage for an open-ended range." },
+        "colour": { "type": "string", "description": "e.g. 'yellow', 'green', 'amber', 'red'. Red is reserved for a genuine 'well past its best' cutoff, not merely 'past peak' — avoid overstating food-safety risk in the wording that goes with it." }
+      }
+    },
+
+    "variation": {
+      "type": "object",
+      "required": ["name", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+
+    "note": {
+      "type": "object",
+      "required": ["label", "body"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string", "description": "e.g. 'Storage', 'Flavour profile', 'Yield guide'." },
+        "body": { "type": "string" }
+      }
+    }
+  }
+}
