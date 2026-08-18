@@ -94,7 +94,7 @@ initTextScale();
 
 /* ---------- build tag (appended to every page footer so a stale deploy is instantly visible) ---------- */
 
-const APP_BUILD = 'BUILD 2026-08-18B';
+const APP_BUILD = 'BUILD 2026-08-18E';
 (function(){
   try{
     const f = document.querySelector('footer');
@@ -328,8 +328,8 @@ function attachTimer(box, timer, slug){
   });
 }
 
-const ING_STATES = ['null', 'have', 'check', 'buy'];
-const ING_LABELS = { null: '', have: 'HAVE', check: 'CHK', buy: 'BUY' };
+const ING_STATES = ['null', 'check', 'have', 'buy', 'prep', 'ready'];
+const ING_LABELS = { null: '', check: 'CHK', have: 'HAVE', prep: 'PREP', ready: 'DONE', buy: 'BUY' };
 function nextIngState(s){ return ING_STATES[(ING_STATES.indexOf(s) + 1) % ING_STATES.length]; }
 function ingStatusKey(groupId, index){ return `ing-status:${groupId}:${index}`; }
 
@@ -391,7 +391,7 @@ function renderRecipe(recipe, slug, root){
         ${g.items.map((item, i) => {
           const state = sGet(slug, ingStatusKey(g.id, i)) || 'null';
           return `
-          <div class="ing-row ${state === 'have' ? 'done' : ''}" data-group="${escapeHtml(g.id)}" data-index="${i}"
+          <div class="ing-row ${(state === 'have' || state === 'ready') ? 'done' : ''}" data-group="${escapeHtml(g.id)}" data-index="${i}"
                role="button" tabindex="0" aria-label="${escapeHtml(item.name)} — status ${state === 'null' ? 'unmarked' : state}. Activate to change.">
             <span class="ing-status state-${state}">${ING_LABELS[state]}</span>
             <span class="ing-name">${formatIngredientName(item.name)}</span>

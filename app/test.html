@@ -175,10 +175,30 @@ test('text size cycles through all five steps and wraps around', () => {
   assertEqual(JSON.stringify(seen), JSON.stringify([112.5, 125, 137.5, 87.5, 100]), `unexpected cycle order: ${seen.join(', ')}`);
 });
 
-test('nextIngState cycles unmarked → have → check → buy → unmarked', () => {
+test('nextIngState cycles unmarked → check → have → buy → prep → done → unmarked', () => {
   const seq = ['null'];
-  for(let i = 0; i < 4; i++) seq.push(nextIngState(seq[seq.length - 1]));
-  assertEqual(JSON.stringify(seq), JSON.stringify(['null','have','check','buy','null']), `unexpected cycle: ${seq.join(', ')}`);
+  for(let i = 0; i < 6; i++) seq.push(nextIngState(seq[seq.length - 1]));
+  assertEqual(JSON.stringify(seq), JSON.stringify(['null','check','have','buy','prep','ready','null']), `unexpected cycle: ${seq.join(', ')}`);
+});
+
+test('HAVE and DONE both trigger the faded row treatment — CHK, PREP and BUY stay full-opacity', () => {
+  const slug = '__test_ing_fade';
+  const root = document.createElement('div');
+  document.body.appendChild(root);
+  const recipe = {
+    title: 'Test', ingredients: [{ id:'raw', title:'Raw', items:[{name:'A'},{name:'B'},{name:'C'},{name:'D'},{name:'E'}] }],
+    steps: [{ number:1, body:'Do a thing.' }]
+  };
+  ['check','have','prep','ready','buy'].forEach((state, i) => sSet(slug, ingStatusKey('raw', i), state));
+  renderRecipe(recipe, slug, root);
+  const rows = root.querySelectorAll('.ing-row');
+  assertTrue(!rows[0].classList.contains('done'), 'CHK should not fade');
+  assertTrue(rows[1].classList.contains('done'), 'HAVE should fade');
+  assertTrue(!rows[2].classList.contains('done'), 'PREP should not fade — it still needs action');
+  assertTrue(rows[3].classList.contains('done'), 'DONE should fade — fully resolved, same as HAVE');
+  assertTrue(!rows[4].classList.contains('done'), 'BUY should not fade');
+  document.body.removeChild(root);
+  ['check','have','prep','ready','buy'].forEach((s, i) => sDelete(slug, ingStatusKey('raw', i)));
 });
 
 test('ingStatusKey produces a stable, group-and-index-scoped key', () => {

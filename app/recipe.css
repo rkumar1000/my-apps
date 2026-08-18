@@ -158,6 +158,13 @@ section{ margin-top:34px; }
 .ing-status.state-have{ background:var(--stage-green); }
 .ing-status.state-check{ background:var(--stage-amber); }
 .ing-status.state-buy{ background:var(--stage-red); }
+/* Fixed (non-themed) dark text — yellow is lighter than the other three states,
+   so the usual pale badge text wouldn't stay readable; same reasoning as the
+   tracker's own gauge-zone text, which is dark for the same colour. */
+.ing-status.state-prep{ background:var(--stage-yellow); color:#292420; }
+/* DONE reuses HAVE's green deliberately — both mean 'fully ready, nothing more to do',
+   just reached via a different path (needed prep vs. didn't). Word distinguishes which. */
+.ing-status.state-ready{ background:var(--stage-green); }
 
 .sec-reset-btn{
   font-family:'IBM Plex Mono',monospace; font-size:0.72rem; font-weight:600; flex:none;
