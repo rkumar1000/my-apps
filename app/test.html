@@ -175,6 +175,17 @@ test('text size cycles through all five steps and wraps around', () => {
   assertEqual(JSON.stringify(seen), JSON.stringify([112.5, 125, 137.5, 87.5, 100]), `unexpected cycle order: ${seen.join(', ')}`);
 });
 
+test('nextIngState cycles unmarked → have → check → buy → unmarked', () => {
+  const seq = ['null'];
+  for(let i = 0; i < 4; i++) seq.push(nextIngState(seq[seq.length - 1]));
+  assertEqual(JSON.stringify(seq), JSON.stringify(['null','have','check','buy','null']), `unexpected cycle: ${seq.join(', ')}`);
+});
+
+test('ingStatusKey produces a stable, group-and-index-scoped key', () => {
+  assertEqual(ingStatusKey('raw', 3), 'ing-status:raw:3');
+  assertEqual(ingStatusKey('binding-paste', 0), 'ing-status:binding-paste:0');
+});
+
 /* ---------------- INTERFACE TESTS (cross-recipe storage isolation) ---------------- */
 
 currentGroup = 'Interface';
@@ -209,6 +220,38 @@ test('step completion is namespaced per recipe and persists', () => {
   assertTrue(!!sGet('__test_recipe_a','step-done:3'), 'step 3 should be marked done for recipe a');
   assertTrue(!sGet('__test_recipe_b','step-done:3'), 'the same step number on a different recipe should be unaffected');
   sDelete('__test_recipe_a','step-done:3');
+});
+
+test('ingredient status is namespaced per recipe and does not collide', () => {
+  sSet('__test_recipe_a', ingStatusKey('raw', 0), 'have');
+  sSet('__test_recipe_b', ingStatusKey('raw', 0), 'buy');
+  assertEqual(sGet('__test_recipe_a', ingStatusKey('raw', 0)), 'have');
+  assertEqual(sGet('__test_recipe_b', ingStatusKey('raw', 0)), 'buy');
+  sDelete('__test_recipe_a', ingStatusKey('raw', 0));
+  sDelete('__test_recipe_b', ingStatusKey('raw', 0));
+});
+
+test('marked ingredient renders its badge and fades the row; Reset clears every marked ingredient', () => {
+  const slug = '__test_ing_render';
+  sSet(slug, ingStatusKey('raw', 0), 'buy');
+  sSet(slug, ingStatusKey('raw', 1), 'have');
+  const root = document.createElement('div');
+  document.body.appendChild(root);
+  const recipe = {
+    title: 'Test', ingredients: [{ id:'raw', title:'Raw', items:[{name:'Item A'},{name:'Item B'},{name:'Item C'}] }],
+    steps: [{ number:1, body:'Do a thing.' }]
+  };
+  renderRecipe(recipe, slug, root);
+  const rowA = root.querySelectorAll('.ing-row')[0];
+  const rowB = root.querySelectorAll('.ing-row')[1];
+  assertTrue(rowA.querySelector('.state-buy') !== null, 'Item A should show a BUY badge');
+  assertTrue(rowB.classList.contains('done'), 'Item B (have) should get the faded done class');
+  assertTrue(rowA.getAttribute('aria-label').includes('buy'), 'row should carry an aria-label reflecting its state');
+  root.querySelector('#ingResetBtn').click();
+  assertEqual(sGet(slug, ingStatusKey('raw', 0)), null, 'Reset should clear item A');
+  assertEqual(sGet(slug, ingStatusKey('raw', 1)), null, 'Reset should clear item B');
+  document.body.removeChild(root);
+  sDelete(slug, ingStatusKey('raw', 0)); sDelete(slug, ingStatusKey('raw', 1));
 });
 
 /* ---------------- INTEGRATION TESTS (fetch the real files) ---------------- */

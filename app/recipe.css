@@ -139,12 +139,31 @@ section{ margin-top:34px; }
 }
 .card h3{ font-family:'Archivo Expanded',sans-serif; font-size:0.94rem; font-weight:700; margin:0 0 10px; color:var(--gochugaru-deep); }
 .ing-row{
-  display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:9px 0; border-bottom:1px dashed var(--line); font-size:0.94rem;
+  display:flex; align-items:baseline; gap:9px; padding:9px 0; border-bottom:1px dashed var(--line); font-size:0.94rem;
+  cursor:pointer; user-select:none; transition:opacity 0.2s;
 }
 .ing-row:last-child{ border-bottom:none; }
+.ing-row.done{ opacity:0.62; }
+.ing-name{ flex:1; }
 .ing-name b{ font-weight:600; }
 .ing-sub{ opacity:0.6; font-size:0.95em; }
 .ing-amt{ font-family:'IBM Plex Mono',monospace; font-weight:600; white-space:nowrap; color:var(--cabbage-deep); flex:none; }
+
+.ing-status{
+  flex:none; width:34px; text-align:center; align-self:center;
+  font-family:'IBM Plex Mono',monospace; font-size:0.75rem; font-weight:700; letter-spacing:-0.02em;
+  padding:4px 1px; border-radius:6px; color:var(--paste);
+}
+.ing-status.state-null{ background:none; border:1.5px dashed var(--line); color:transparent; }
+.ing-status.state-have{ background:var(--stage-green); }
+.ing-status.state-check{ background:var(--stage-amber); }
+.ing-status.state-buy{ background:var(--stage-red); }
+
+.sec-reset-btn{
+  font-family:'IBM Plex Mono',monospace; font-size:0.72rem; font-weight:600; flex:none;
+  background:none; border:1px solid var(--line); border-radius:7px; padding:5px 10px; cursor:pointer; color:var(--charcoal);
+}
+
 @media (min-width:640px){
   .card.wide-cols{ column-count:2; column-gap:24px; }
   .card.wide-cols .ing-row{ break-inside:avoid; }
@@ -226,8 +245,8 @@ section{ margin-top:34px; }
 footer{ text-align:center; margin-top:36px; font-size:0.75rem; color:rgba(var(--ink-rgb),0.4); font-family:'IBM Plex Mono',monospace; }
 
 @media print{
-  .batch, .timer, .tracker-actions, .btn, .step-check, .theme-toggle{ display:none !important; }
-  .step.done{ opacity:1; }
+  .batch, .timer, .tracker-actions, .btn, .step-check, .theme-toggle, .ing-status, .sec-reset-btn{ display:none !important; }
+  .step.done, .ing-row.done{ opacity:1; }
   body{ background:#fff; color:#000; }
   .card, .label, .tracker, .tracker-prompt{ border:1px solid #ccc; background:#fff !important; color:#000 !important; }
   .tracker h2, .tracker-status{ color:#000 !important; }

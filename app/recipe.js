@@ -94,7 +94,7 @@ initTextScale();
 
 /* ---------- build tag (appended to every page footer so a stale deploy is instantly visible) ---------- */
 
-const APP_BUILD = 'BUILD 2026-07-12A';
+const APP_BUILD = 'BUILD 2026-08-18B';
 (function(){
   try{
     const f = document.querySelector('footer');
@@ -328,6 +328,11 @@ function attachTimer(box, timer, slug){
   });
 }
 
+const ING_STATES = ['null', 'have', 'check', 'buy'];
+const ING_LABELS = { null: '', have: 'HAVE', check: 'CHK', buy: 'BUY' };
+function nextIngState(s){ return ING_STATES[(ING_STATES.indexOf(s) + 1) % ING_STATES.length]; }
+function ingStatusKey(groupId, index){ return `ing-status:${groupId}:${index}`; }
+
 /* ---------- main render ---------- */
 
 function renderRecipe(recipe, slug, root){
@@ -375,7 +380,7 @@ function renderRecipe(recipe, slug, root){
 
   // ---- ingredients ----
   const ingSection = document.createElement('section');
-  ingSection.innerHTML = `<div class="sec-head"><h2>Ingredients</h2><div class="rule"></div></div><div id="ing-groups"></div>`;
+  ingSection.innerHTML = `<div class="sec-head"><h2>Ingredients</h2><div class="rule"></div><button class="sec-reset-btn" id="ingResetBtn">Reset</button></div><div id="ing-groups"></div>`;
   root.appendChild(ingSection);
   const ingGroups = ingSection.querySelector('#ing-groups');
 
@@ -383,14 +388,43 @@ function renderRecipe(recipe, slug, root){
     ingGroups.innerHTML = recipe.ingredients.map(g => `
       <div class="card ${g.items.length > 6 ? 'wide-cols' : ''}">
         <h3>${escapeHtml(g.title)}</h3>
-        ${g.items.map(item => `
-          <div class="ing-row">
+        ${g.items.map((item, i) => {
+          const state = sGet(slug, ingStatusKey(g.id, i)) || 'null';
+          return `
+          <div class="ing-row ${state === 'have' ? 'done' : ''}" data-group="${escapeHtml(g.id)}" data-index="${i}"
+               role="button" tabindex="0" aria-label="${escapeHtml(item.name)} — status ${state === 'null' ? 'unmarked' : state}. Activate to change.">
+            <span class="ing-status state-${state}">${ING_LABELS[state]}</span>
             <span class="ing-name">${formatIngredientName(item.name)}</span>
             <span class="ing-amt">${renderIngredientAmount(item, mult.value)}</span>
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>`).join('');
   }
   renderIngredients();
+
+  function cycleIngRow(row){
+    const key = ingStatusKey(row.dataset.group, row.dataset.index);
+    const next = nextIngState(sGet(slug, key) || 'null');
+    if(next === 'null') sDelete(slug, key);
+    else sSet(slug, key, next);
+    renderIngredients();
+  }
+  ingGroups.addEventListener('click', (e) => {
+    const row = e.target.closest('.ing-row');
+    if(row) cycleIngRow(row);
+  });
+  ingGroups.addEventListener('keydown', (e) => {
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+    const row = e.target.closest('.ing-row');
+    if(row){ e.preventDefault(); cycleIngRow(row); }
+  });
+
+  ingSection.querySelector('#ingResetBtn').addEventListener('click', () => {
+    recipe.ingredients.forEach(g => {
+      g.items.forEach((item, i) => sDelete(slug, ingStatusKey(g.id, i)));
+    });
+    renderIngredients();
+  });
 
   if(header.querySelector('#inc')){
     header.querySelector('#inc').addEventListener('click', () => {

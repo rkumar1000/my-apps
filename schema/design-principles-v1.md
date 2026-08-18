@@ -25,6 +25,6 @@ A high-level summary of the decisions made so far, grouped into three levels. No
 
 - **Static files only.** HTML, CSS, JS, and JSON — no server, no build step, no framework. Hosted as plain files on GitHub Pages.
 - **One generic shell page reads any recipe's data and renders it.** Recipes are data files, not code — adding a recipe means adding a JSON file, never editing the shell.
-- **All in-session state is local to the device and browser.** Batch tracking, timer progress, ticked-off steps — all saved via the browser's own local storage, scoped per recipe so different recipes never collide with each other's saved state.
+- **All in-session state is local to the device and browser.** Batch tracking, timer progress, ticked-off steps, ingredient shopping status (have/check/buy) — all saved via the browser's own local storage, scoped per recipe so different recipes never collide with each other's saved state.
 - **Offline/installable behaviour (PWA) is deliberately deferred** until the shell and schema are stable. Adding offline caching while the shell is still changing would only get in the way of testing.
 - **Formatting decisions (bolding measures, lightening substitution text) live entirely in the renderer.** They never require a new data field — the same JSON looks right whether or not a given formatting rule exists yet.
