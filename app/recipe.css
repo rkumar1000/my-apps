@@ -164,7 +164,11 @@ section{ margin-top:34px; }
 .ing-status.state-prep{ background:var(--stage-yellow); color:#292420; }
 /* DONE reuses HAVE's green deliberately — both mean 'fully ready, nothing more to do',
    just reached via a different path (needed prep vs. didn't). Word distinguishes which. */
-.ing-status.state-ready{ background:var(--stage-green); }
+/* DONE gets its own fixed black/white — deliberately NOT theme-linked, so it reads as
+   the same unmistakable 'end of the line' landmark in both light and dark mode. This
+   also removes the earlier green/green collision with HAVE that made fast cycling
+   through states hard to track at a glance. */
+.ing-status.state-ready{ background:#292420; color:#F1E6CE; }
 
 .sec-reset-btn{
   font-family:'IBM Plex Mono',monospace; font-size:0.72rem; font-weight:600; flex:none;
