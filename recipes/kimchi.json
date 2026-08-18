@@ -95,7 +95,7 @@
 
   "fermentationTracker": {
     "stages": [
-      { "id": "early", "label": "Fresh", "description": "Fresh, crisp, lightly fermented — still settling in", "fromDay": 0, "toDay": 2, "colour": "yellow" },
+      { "id": "early", "label": "Fresh", "description": "Crisp and lightly fermented — still settling in", "fromDay": 0, "toDay": 2, "colour": "yellow" },
       { "id": "peak", "label": "Best window", "description": "Balanced, tangy, still crunchy — the best time to eat it", "fromDay": 3, "toDay": 14, "colour": "green" },
       { "id": "past", "label": "Past peak", "description": "More sour and softer, with possible slight bitterness", "fromDay": 15, "toDay": 20, "colour": "amber" },
       { "id": "avoid", "label": "Well past best", "description": "Very sour and soft by now — better used cooked into dishes like kimchi jjigae than eaten fresh", "fromDay": 21, "colour": "red" }

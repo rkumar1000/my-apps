@@ -92,6 +92,16 @@ function initTextScale(){
 }
 initTextScale();
 
+/* ---------- build tag (appended to every page footer so a stale deploy is instantly visible) ---------- */
+
+const APP_BUILD = 'BUILD 2026-07-12A';
+(function(){
+  try{
+    const f = document.querySelector('footer');
+    if(f) f.textContent += ' · ' + APP_BUILD;
+  }catch(e){}
+})();
+
 /* ---------- small utilities ---------- */
 
 function escapeHtml(str){

@@ -1,0 +1,172 @@
+{
+  "title": "Kathiyawadi-Inspired Heritage Tomato, Potato & Pea Curry",
+  "category": "Dish",
+  "description": "A rich, tomato-led potato curry inspired by Gujarati/Kathiyawadi flavour architecture. A deeply reduced tinned-tomato masala provides the thick, silky sauce, while fresh heritage tomatoes appear twice: some blistered and charred, others barely cooked so they remain juicy and almost fresh.",
+
+  "servings": { "quantity": 4, "unit": "servings" },
+
+  "times": [
+    { "label": "Prep", "value": "20 minutes" },
+    { "label": "Cook", "value": "45-50 minutes" },
+    { "label": "Total", "value": "about 1 hour" }
+  ],
+
+  "ingredients": [
+    {
+      "id": "potato-peas-tomatoes",
+      "title": "Potato, Peas & Heritage Tomatoes",
+      "items": [
+        { "name": "Potatoes (Maris Piper or similar), peeled and cut into 3cm chunks", "amount": 550, "unit": "g", "scaleMode": "weight" },
+        { "name": "Mixed heritage tomatoes, divided — some for charring, the rest left almost-fresh", "amount": 425, "unit": "g", "scaleMode": "weight", "display": "400-450g total" },
+        { "name": "Peas, fresh or frozen", "amount": 125, "unit": "g", "scaleMode": "weight" }
+      ]
+    },
+    {
+      "id": "masala",
+      "title": "Silky Tomato Masala",
+      "items": [
+        { "name": "Good-quality whole plum tomatoes", "amount": 1, "unit": "x 400g tin", "scaleMode": "whole" },
+        { "name": "Onion, very finely chopped", "amount": 110, "unit": "g", "scaleMode": "weight", "display": "100-120g" },
+        { "name": "Garlic cloves, finely grated or crushed", "amount": 6.5, "unit": "cloves", "scaleMode": "whole_range", "display": "6-7 cloves" },
+        { "name": "Fresh ginger, finely grated", "amount": 15, "unit": "g", "scaleMode": "weight" },
+        { "name": "Green chilli paste, divided across two additions", "amount": 0.875, "unit": "tsp", "scaleMode": "volume", "display": "¾-1 tsp total" },
+        { "name": "Soft sun-dried tomato flesh, scraped from the skin and mashed to a paste", "amount": 10, "unit": "g", "scaleMode": "weight" },
+        { "name": "Good tomato juice — a controlled cooking liquid kept beside the hob, used only as needed to stop the masala catching, not a set addition", "amount": 125, "unit": "ml", "scaleMode": "volume", "display": "100-150ml, as needed" },
+        { "name": "Fresh thyme sprig", "amount": 1, "unit": "small sprig", "scaleMode": "whole" }
+      ]
+    },
+    {
+      "id": "oil-tempering-spices",
+      "title": "Oil, Tempering & Spices",
+      "items": [
+        { "name": "Oil, primarily rapeseed (up to 1 tsp may be swapped for oil from the sun-dried tomatoes)", "amount": 2.5, "unit": "tbsp", "scaleMode": "volume" },
+        { "name": "Black mustard seeds", "amount": 0.75, "unit": "tsp", "scaleMode": "volume" },
+        { "name": "Cumin seeds", "amount": 1, "unit": "tsp", "scaleMode": "volume" },
+        { "name": "Fenugreek seeds", "amount": 0.125, "unit": "tsp", "scaleMode": "volume", "display": "⅛ tsp" },
+        { "name": "Whole dried red chilli", "amount": 1, "unit": "chilli", "scaleMode": "whole" },
+        { "name": "Asafoetida / hing, small pinch (optional)" },
+        { "name": "Ground coriander", "amount": 1.5, "unit": "tsp", "scaleMode": "volume" },
+        { "name": "Turmeric", "amount": 0.5, "unit": "tsp", "scaleMode": "volume" },
+        { "name": "Kashmiri chilli powder", "amount": 0.5, "unit": "tsp", "scaleMode": "volume" },
+        { "name": "Fine sea salt, to taste" }
+      ]
+    },
+    {
+      "id": "smoke-finish",
+      "title": "Smoke & Finish",
+      "items": [
+        { "name": "Halen Môn smoked water, divided across two additions (plus 2-5ml more only if needed after tasting)", "amount": 15, "unit": "ml", "scaleMode": "volume", "display": "15ml total, plus more to taste" },
+        { "name": "Maldon oak-smoked salt, small pinch" },
+        { "name": "Fresh coriander, roughly chopped", "amount": 2, "unit": "tbsp", "scaleMode": "volume" },
+        { "name": "Fresh basil leaves, torn or finely shredded", "amount": 5.5, "unit": "leaves", "scaleMode": "whole_range", "display": "5-6 leaves" },
+        { "name": "Jaggery or soft brown sugar (optional, to balance acidity)", "amount": 0.375, "unit": "tsp", "scaleMode": "volume", "display": "¼-½ tsp, optional" },
+        { "name": "Small squeeze of lemon or lime (optional, to balance sweetness)" }
+      ]
+    }
+  ],
+
+  "steps": [
+    {
+      "number": 1,
+      "title": "Par-cook the potatoes",
+      "component": "Potatoes",
+      "body": "Put the potato chunks into lightly salted cold water. Bring to the boil and simmer for 6-8 minutes. They should be starting to soften around the outside but remain distinctly firm in the centre. Drain thoroughly and leave to steam-dry. Do not fully cook them.",
+      "timer": { "id": "parcook-potatoes", "label": "Par-cook the potatoes", "seconds": 420 }
+    },
+    {
+      "number": 2,
+      "title": "Char some of the heritage tomatoes",
+      "component": "Tomatoes",
+      "body": "Heat a wide sauté pan, kadai or casserole over fairly high heat. Add a little of the measured oil, then the 125-150g tomatoes. Leave them long enough to develop genuinely dark blistered patches, then turn and char another surface. Remove to a plate. If the pan contains burnt black residue, wipe it out before continuing; browned tomato fond is fine."
+    },
+    {
+      "number": 3,
+      "title": "Make the tarka",
+      "component": "Masala Base",
+      "body": "Reduce the heat to medium and add the remaining oil. Add the mustard seeds, cumin seeds, fenugreek seeds and whole dried chilli. Cook until the mustard begins popping and the cumin becomes fragrant. Let the dried chilli darken slightly, but do not burn it. Add the asafoetida, if using, for a few seconds."
+    },
+    {
+      "number": 4,
+      "title": "Build the aromatic base",
+      "component": "Masala Base",
+      "body": "Add the onion with a small pinch of salt. Cook over medium-low heat for 7-9 minutes, stirring regularly, until very soft and lightly golden. Add the garlic, ginger and ½-¾ tsp green chilli paste. Cook for 2-3 minutes so the first chilli addition loses its raw edge and becomes integrated into the sauce.",
+      "timer": { "id": "aromatic-base", "label": "Cook the onion", "seconds": 480 }
+    },
+    {
+      "number": 5,
+      "title": "Bloom the ground spices",
+      "component": "Masala Base",
+      "body": "Lower the heat slightly. Add the ground coriander, turmeric and Kashmiri chilli. Cook for 30-45 seconds, stirring continuously. If the pan looks too dry, add a teaspoon of tomato juice rather than extra oil. Do not allow the spices to scorch.",
+      "timer": { "id": "bloom-spices", "label": "Bloom the ground spices", "seconds": 38 }
+    },
+    {
+      "number": 6,
+      "title": "Cook down the tomato masala",
+      "component": "Masala Base",
+      "body": "Crush the tinned whole tomatoes roughly and add them with their juices. Add the sun-dried tomato flesh, thyme sprig, about ½ tsp fine salt and 5ml Halen Môn smoked water. Bring to a lively simmer, then reduce to medium-low. Cook uncovered for 15-20 minutes, stirring increasingly frequently as it thickens. If the masala starts catching before it has properly cooked down, add tomato juice in 20-30ml splashes, allowing each addition to reduce before deciding whether it needs more.",
+      "timer": { "id": "cook-masala", "label": "Cook down the tomato masala", "seconds": 1050 }
+    },
+    {
+      "number": 7,
+      "title": "Create the silky texture",
+      "component": "Masala Base",
+      "body": "Remove the thyme sprig and whole dried chilli. Using a stick blender, pulse approximately one-third to one-half of the masala. Do not purée the whole pan. Stir the smoother and textured portions together. The sauce should now be thick, glossy and intensely tomatoey; reduce further now if it's still loose. Texture checkpoint: before the potatoes go in, the sauce should already be slightly thicker than the final result you want — the potatoes, peas and late tomatoes will add back a little moisture."
+    },
+    {
+      "number": 8,
+      "title": "Finish the potatoes in the masala",
+      "component": "Bring Together",
+      "body": "Add the par-cooked potatoes and fold them gently through the sauce. If the sauce is too thick for the potatoes to finish cooking without catching, add 25-30ml tomato juice. Cover loosely and simmer gently for 7-10 minutes, stirring carefully two or three times. Once the potatoes are nearly tender, uncover. Crush 2-3 potato pieces against the side of the pan and stir them back into the masala.",
+      "timer": { "id": "finish-potatoes", "label": "Simmer the potatoes in the masala", "seconds": 510 }
+    },
+    {
+      "number": 9,
+      "title": "Check the consistency",
+      "component": "Bring Together",
+      "body": "Drag a wooden spoon through the bottom of the pan. The channel should stay visible briefly and then slowly close. If the sauce immediately floods back, reduce uncovered before moving on."
+    },
+    {
+      "number": 10,
+      "title": "Add peas and charred tomatoes",
+      "component": "Bring Together",
+      "body": "Gently fold in the peas and the reserved charred tomatoes. Cook for about 2 minutes. The peas should remain bright and sweet and the charred tomatoes should retain some identity.",
+      "timer": { "id": "peas-charred", "label": "Warm through peas and charred tomatoes", "seconds": 120 }
+    },
+    {
+      "number": 11,
+      "title": "Add the second green-chilli layer",
+      "component": "Bring Together",
+      "body": "Stir through ¼ tsp green chilli paste and taste. Do not automatically add more. If your chilli paste is particularly strong, even this may be enough. The intended heat profile is toasted dried chilli, rounded Kashmiri warmth, then a fresher green-chilli lift."
+    },
+    {
+      "number": 12,
+      "title": "Add the almost-fresh heritage tomatoes",
+      "component": "Finish",
+      "body": "Very gently fold in the remaining 275-300g heritage tomatoes. Cook uncovered over low heat for only 1½-3 minutes. They should be warmed through, juicy and clearly fresher than the sauce — not cooked down. A few small tomatoes splitting naturally is ideal.",
+      "timer": { "id": "fresh-tomatoes", "label": "Warm the almost-fresh tomatoes", "seconds": 135 }
+    },
+    {
+      "number": 13,
+      "title": "Add the late smoke",
+      "component": "Finish",
+      "body": "Turn the heat to its lowest setting or remove the pan from the heat. Drizzle over the remaining 10ml Halen Môn smoked water and gently fold it through. Taste after about a minute. If the smoke still disappears beneath the tomato and spices, add another 2-5ml off the heat.",
+      "timer": { "id": "late-smoke", "label": "Rest before tasting the smoke", "seconds": 60 }
+    },
+    {
+      "number": 14,
+      "title": "Finish",
+      "component": "Finish",
+      "body": "Turn off the heat completely. Gently fold through the coriander and basil. Crush a small pinch of Maldon oak-smoked salt between your fingers and scatter it mainly across the surface and the fresh tomatoes. Rest for 2-3 minutes, then taste again. If too acidic, add ¼ tsp jaggery and reassess before adding more. If too sweet or heavy, add a small squeeze of lemon or lime. If under-seasoned, correct ordinary salt first.",
+      "timer": { "id": "final-rest", "label": "Rest before serving", "seconds": 150 }
+    }
+  ],
+
+  "notes": [
+    { "label": "Design intent", "body": "Tomato in three forms: a concentrated tinned-tomato base, charred heritage tomato, and almost-fresh heritage tomato. Texture: rich, glossy and spoon-coating, never thin or watery. Heat and smoke: layered for complexity, but restrained enough to preserve the basil, thyme and fresh tomato top notes." },
+    { "label": "Flavour progression", "body": "Deep tomato and garlic, then mustard, cumin and restrained fenugreek, then soft potato and sweet peas, then rounded red and fresh green chilli, then charred tomato, then a burst of almost-fresh heritage tomato, then coriander and basil, then elusive thyme, then gentle lingering smoke." },
+    { "label": "If it needs adjusting", "body": "Too acidic: add ¼ tsp jaggery, taste, then consider another ¼ tsp only if needed. Too sweet or heavy: add a small squeeze of lemon or lime. Under-seasoned: correct with ordinary salt first — use smoked salt only for its surface aroma. Smoke too faint: add a few more drops of smoked water off the heat rather than increasing the smoked salt. Heat too restrained: add a very small extra amount of green chilli paste, preferably to individual portions rather than the whole pan." },
+    { "label": "Serving", "body": "Serve with fresh roti, chapati or paratha, which suit the thick sauce particularly well. For a fuller meal, add a relatively simple dal or plain yoghurt/raita. Avoid pairing it with another elaborate curry — this is intended to be the vegetable centrepiece." },
+    { "label": "Make ahead, storage & reheating", "body": "For best make-ahead results, cook the masala and potatoes first, then add the peas, charred tomatoes, late green chilli, fresh tomatoes, late smoke and herbs on reheating. Fully finished leftovers keep refrigerated for up to 3 days, though the fresh tomatoes will naturally soften. Reheat only until piping hot — prolonged simmering erases the fresh tomato and herb contrast." },
+    { "label": "Nutrition note", "body": "Vegetable- and fibre-rich, with peas adding some protein. Not intended as a pulse-heavy one-pot meal — pairing it with dal or yoghurt gives a more complete protein contribution while preserving the curry's tomato-potato identity." }
+  ]
+}

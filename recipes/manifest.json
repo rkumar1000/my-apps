@@ -2,6 +2,9 @@
   "recipes": [
     { "slug": "kimchi", "title": "Home-Style Korean Round Cabbage Kimchi", "type": "ferment" },
     { "slug": "paella-stuffed-tomatoes", "title": "Romesco Paella-Stuffed Tomatoes with Bravas-Style Jersey Royals", "type": "dish" },
-    { "slug": "fancy-housemade-soda", "title": "Fancy Housemade Soda", "type": "drink" }
+    { "slug": "fancy-housemade-soda", "title": "Fancy Housemade Soda", "type": "drink" },
+    { "slug": "fennel-pasta", "title": "Fennel Pasta with a Chilli-Citrus Crumb", "type": "dish" },
+    { "slug": "parmigiana-dark-heart", "title": "Parmigiana With a Dark Heart", "type": "dish" },
+    { "slug": "kathiyawadi-curry", "title": "Kathiyawadi-Inspired Heritage Tomato, Potato & Pea Curry", "type": "dish" }
   ]
 }
