@@ -94,7 +94,7 @@ initTextScale();
 
 /* ---------- build tag (appended to every page footer so a stale deploy is instantly visible) ---------- */
 
-const APP_BUILD = 'BUILD 2026-08-18F';
+const APP_BUILD = 'BUILD 2026-08-18G';
 (function(){
   try{
     const f = document.querySelector('footer');

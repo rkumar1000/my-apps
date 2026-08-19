@@ -161,7 +161,9 @@ section{ margin-top:34px; }
 /* Fixed (non-themed) dark text — yellow is lighter than the other three states,
    so the usual pale badge text wouldn't stay readable; same reasoning as the
    tracker's own gauge-zone text, which is dark for the same colour. */
-.ing-status.state-prep{ background:var(--stage-yellow); color:#292420; }
+/* PREP deliberately matches CHK — both mean 'a task you still owe'. The words
+   distinguish them; the shared amber groups them as outstanding to-dos. */
+.ing-status.state-prep{ background:var(--stage-amber); }
 /* DONE reuses HAVE's green deliberately — both mean 'fully ready, nothing more to do',
    just reached via a different path (needed prep vs. didn't). Word distinguishes which. */
 /* DONE gets its own fixed black/white — deliberately NOT theme-linked, so it reads as
