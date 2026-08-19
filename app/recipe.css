@@ -244,8 +244,21 @@ section{ margin-top:34px; }
 
 /* ---------- index page ---------- */
 .recipe-card{
-  display:block; background:var(--paste); border:1px solid var(--line); border-radius:12px;
+  display:flex; align-items:center; gap:14px;
+  background:var(--paste); border:1px solid var(--line); border-radius:12px;
   padding:16px; margin-bottom:12px; text-decoration:none; color:var(--charcoal);
+}
+.recipe-card-text{ flex:1; min-width:0; }
+.card-thumb{
+  width:72px; height:72px; flex:none; object-fit:cover;
+  border-radius:9px; border:1px solid var(--line);
+}
+/* Optional recipe photo. Loaded by convention from images/{slug}.jpg — the element
+   removes itself if the file isn't there, so recipes without a photo render exactly
+   as they did before: no box, no gap, no broken-image icon. */
+.recipe-hero{
+  width:100%; aspect-ratio:16/9; object-fit:cover; display:block;
+  border-radius:12px; border:1px solid var(--line); margin-top:14px;
 }
 .recipe-card h3{ font-family:'Archivo Expanded',sans-serif; color:var(--cabbage-deep); margin:0 0 4px; font-size:1.06rem; }
 .recipe-card span{ font-size:0.81rem; color:rgba(var(--ink-rgb),0.6); }

@@ -94,7 +94,7 @@ initTextScale();
 
 /* ---------- build tag (appended to every page footer so a stale deploy is instantly visible) ---------- */
 
-const APP_BUILD = 'BUILD 2026-08-18G';
+const APP_BUILD = 'BUILD 2026-08-18H';
 (function(){
   try{
     const f = document.querySelector('footer');
@@ -369,6 +369,14 @@ function renderRecipe(recipe, slug, root){
   `;
   root.appendChild(header);
 
+  // ---- optional hero image (convention: images/{slug}.jpg — silently absent if not there) ----
+  const hero = document.createElement('img');
+  hero.className = 'recipe-hero';
+  hero.src = `../images/${slug}.jpg`;
+  hero.alt = '';
+  hero.addEventListener('error', () => hero.remove());
+  root.appendChild(hero);
+
   function updateBatchStats(){
     const out = header.querySelector('#multOut');
     if(out) out.textContent = fmtNum(mult.value) + '×';
@@ -570,8 +578,11 @@ async function loadAndRenderIndex(){
     const data = await res.json();
     root.innerHTML = (data.recipes || []).map(r => `
       <a class="recipe-card" href="recipe.html?recipe=${encodeURIComponent(r.slug)}">
-        <h3>${escapeHtml(r.title)}</h3>
-        <span>${escapeHtml(r.type || 'recipe')}</span>
+        <div class="recipe-card-text">
+          <h3>${escapeHtml(r.title)}</h3>
+          <span>${escapeHtml(r.type || 'recipe')}</span>
+        </div>
+        <img class="card-thumb" src="../images/${encodeURIComponent(r.slug)}.jpg" alt="" onerror="this.remove()">
       </a>`).join('');
   }catch(e){
     renderError([

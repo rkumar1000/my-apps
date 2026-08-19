@@ -37,6 +37,7 @@ Fixed structure only for what every recipe shares (title, ingredients, steps). F
 
 **Component badges are now genuinely visible**, not just internal bookkeeping — a step's `component` renders as a small coloured tag above it. Worth adding to any recipe with real interleaved components (sauce/potatoes/tomatoes running in parallel); skip it for simple single-track recipes where every step is already sequential.
 
+**Recipe photos** — drop a file at `images/{slug}.jpg`, matching the recipe's slug exactly. No JSON field, no schema change: the app looks for it by convention and silently renders without a photo if it isn't there. Update by overwriting the same filename; remove by deleting the file. Landscape works best (centre-cropped to 16:9 on the recipe page, square on the index thumbnail). Only use photos you own or have generated yourself — the repo is public, so third-party recipe photography from source sites or PDFs shouldn't be republished here.
+
 ## Deliberately deferred (not in v1)
-- **Images** — still deferred as of this pass. A live thumbnail test was planned, but this environment doesn't currently have an image-generation tool available, so nothing was added to the schema speculatively. Revisit once either a real image source or generation tool is actually in hand.
 - **PWA / offline caching / update detection** — hold until the shell and JSON schema are locked and a handful of real recipes are in place. Adding caching while the shell is still actively changing just fights the workflow.
