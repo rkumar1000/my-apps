@@ -94,7 +94,7 @@ initTextScale();
 
 /* ---------- build tag (appended to every page footer so a stale deploy is instantly visible) ---------- */
 
-const APP_BUILD = 'BUILD 2026-08-18H';
+const APP_BUILD = 'BUILD 2026-08-19A';
 (function(){
   try{
     const f = document.querySelector('footer');
@@ -333,6 +333,22 @@ const ING_LABELS = { null: '', check: 'CHK', have: 'HAVE', prep: 'PREP', ready: 
 function nextIngState(s){ return ING_STATES[(ING_STATES.indexOf(s) + 1) % ING_STATES.length]; }
 function ingStatusKey(groupId, index){ return `ing-status:${groupId}:${index}`; }
 
+/* ---------- optional recipe images ---------- */
+
+// Tries each extension in turn; removes the element entirely if none exist, so a
+// recipe without a photo renders exactly as it would if the feature didn't exist.
+const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'];
+
+function attachRecipeImage(img, slug, pathPrefix){
+  let attempt = 0;
+  function tryNext(){
+    if(attempt >= IMAGE_EXTENSIONS.length){ img.remove(); return; }
+    img.src = `${pathPrefix}${encodeURIComponent(slug)}.${IMAGE_EXTENSIONS[attempt++]}`;
+  }
+  img.addEventListener('error', tryNext);
+  tryNext();
+}
+
 /* ---------- main render ---------- */
 
 function renderRecipe(recipe, slug, root){
@@ -369,13 +385,12 @@ function renderRecipe(recipe, slug, root){
   `;
   root.appendChild(header);
 
-  // ---- optional hero image (convention: images/{slug}.jpg — silently absent if not there) ----
+  // ---- optional hero image (convention: images/{slug}.{jpg|jpeg|png|webp}) ----
   const hero = document.createElement('img');
   hero.className = 'recipe-hero';
-  hero.src = `../images/${slug}.jpg`;
   hero.alt = '';
-  hero.addEventListener('error', () => hero.remove());
   root.appendChild(hero);
+  attachRecipeImage(hero, slug, '../images/');
 
   function updateBatchStats(){
     const out = header.querySelector('#multOut');
@@ -582,8 +597,11 @@ async function loadAndRenderIndex(){
           <h3>${escapeHtml(r.title)}</h3>
           <span>${escapeHtml(r.type || 'recipe')}</span>
         </div>
-        <img class="card-thumb" src="../images/${encodeURIComponent(r.slug)}.jpg" alt="" onerror="this.remove()">
+        <img class="card-thumb" alt="" data-slug="${escapeHtml(r.slug)}">
       </a>`).join('');
+    root.querySelectorAll('.card-thumb').forEach(img => {
+      attachRecipeImage(img, img.dataset.slug, '../images/');
+    });
   }catch(e){
     renderError([
       'Could not load the recipe list.',

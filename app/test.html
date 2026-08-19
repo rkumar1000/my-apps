@@ -25,6 +25,7 @@
 <script src="recipe.js"></script>
 <script>
 const results = [];
+let imageReport = null;
 
 function test(name, fn){
   try{ fn(); results.push({ name, group: currentGroup, pass: true }); }
@@ -316,6 +317,27 @@ async function runIntegrationTests(){
     assertEqual(distinctComponents.length, 3, `expected 3 distinct components, got: ${distinctComponents.join(', ')}`);
   });
 
+  await testAsync('recipe images: reports which recipes have a photo (catches silently misnamed files)', async () => {
+    const res = await fetch('../recipes/manifest.json');
+    const manifest = await res.json();
+    const exts = ['jpg','jpeg','png','webp'];
+    const found = [], missing = [];
+    for(const r of manifest.recipes){
+      let hit = null;
+      for(const ext of exts){
+        try{
+          const probe = await fetch(`../images/${encodeURIComponent(r.slug)}.${ext}`, { method: 'HEAD' });
+          if(probe.ok){ hit = `${r.slug}.${ext}`; break; }
+        }catch(e){ /* keep trying */ }
+      }
+      (hit ? found : missing).push(hit || r.slug);
+    }
+    // Not a failure — recipes without photos are expected and fine. This surfaces the
+    // current state visibly so a misnamed file shows up as "missing" rather than failing silently.
+    imageReport = { found, missing };
+    assertTrue(true, 'informational check');
+  });
+
   await testAsync('manifest.json loads and every listed recipe file actually exists', async () => {
     const res = await fetch('../recipes/manifest.json');
     assertTrue(res.ok, `HTTP ${res.status}`);
@@ -350,6 +372,20 @@ function renderResults(){
         ${r.error ? `<div class="ing-row" style="border:none; padding-top:0;"><span style="color:var(--gochugaru-deep); font-size:12px;">${r.error}</span></div>` : ''}
       `).join('')}
     </div>`).join('');
+
+  if(imageReport){
+    const { found, missing } = imageReport;
+    document.getElementById('results').innerHTML += `
+      <div class="card">
+        <h3>Recipe images</h3>
+        <div class="ing-row"><span><b>With a photo (${found.length}):</b> ${found.length ? found.join(', ') : '—'}</span></div>
+        <div class="ing-row"><span><b>Without a photo (${missing.length}):</b> ${missing.length ? missing.join(', ') : '—'}</span></div>
+        <div class="ing-row" style="border:none;"><span style="font-size:12px; opacity:0.7;">
+          Recipes without a photo render fine — this is just informational. But if you uploaded an image
+          and its recipe still appears in the second list, the filename doesn't match the recipe slug.
+        </span></div>
+      </div>`;
+  }
 }
 
 (async function main(){
